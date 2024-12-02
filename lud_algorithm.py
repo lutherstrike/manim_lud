@@ -662,6 +662,13 @@ class systolicArrayCorner(MovingCameraScene):
     all_objects = VGroup(*peg_array, *fifo_lines, basic_unit)
     self.camera.frame.set_width(all_objects.width * 1.1).move_to(all_objects.get_center())
 
+    upper_unit = bo.MatrixBasic(4)
+    for i in range(4):
+      upper_unit.matrix[0][i].change_fill(GREEN, 1)
+      for j in range(1, 4):
+        upper_unit.matrix[j][i].change_fill(BLUE, 1)
+    upper_unit.move_to(basic_unit.get_center())
+
     self.add(*peg_array, *fifo_lines, basic_unit)
 
     division_symbol = Text("/=", font_size=50, color=BLACK).move_to(peg_array[0].get_center() + DOWN)
@@ -720,6 +727,63 @@ class systolicArrayCorner(MovingCameraScene):
         #column 3
         [basic_unit.matrix[i][3].animate.move_to(peg_array[0].get_center() + LEFT * 2 + UP + DOWN * i) for i in range(4)],
         basic_unit.matrix[0][3].animate.move_to(peg_array[0].get_center() + RIGHT * 2 + DOWN),
+      )
+    )
+
+    self.wait(1)
+    self.play(
+      AnimationGroup(
+        #column 3
+        [basic_unit.matrix[i][3].animate.shift(RIGHT * 10) for i in range(4)],
+      )
+    )
+
+    self.wait(3)
+    self.play(FadeIn(upper_unit))
+
+    self.wait(1)
+    self.play(
+      AnimationGroup(
+        [upper_unit.matrix[i][0].animate.move_to(peg_array[0].get_center() + LEFT * 2 + UP + DOWN * i) for i in range(4)],
+        upper_unit.matrix[0][0].animate.move_to(peg_array[0].get_center() + RIGHT * 2 + DOWN),
+      )
+    )
+
+    self.wait(1)
+    self.play(
+      AnimationGroup(
+        #column 0
+        [upper_unit.matrix[i][0].animate.shift(RIGHT * 10) for i in range(4)],
+        #column 1
+        [upper_unit.matrix[i][1].animate.move_to(peg_array[0].get_center() + LEFT * 2 + UP + DOWN * i) for i in range(4)],
+        upper_unit.matrix[0][1].animate.move_to(peg_array[0].get_center() + RIGHT * 2 + DOWN),
+      )
+    )
+    self.wait(1)
+    self.play(
+      AnimationGroup(
+        #column 1
+        [upper_unit.matrix[i][1].animate.shift(RIGHT * 10) for i in range(4)],
+        #column 2
+        [upper_unit.matrix[i][2].animate.move_to(peg_array[0].get_center() + LEFT * 2 + UP + DOWN * i) for i in range(4)],
+        upper_unit.matrix[0][2].animate.move_to(peg_array[0].get_center() + RIGHT * 2 + DOWN),
+      )
+    )
+    self.wait(1)
+    self.play(
+      AnimationGroup(
+        #column 2
+        [upper_unit.matrix[i][2].animate.shift(RIGHT * 10) for i in range(4)],
+        #column 3
+        [upper_unit.matrix[i][3].animate.move_to(peg_array[0].get_center() + LEFT * 2 + UP + DOWN * i) for i in range(4)],
+        upper_unit.matrix[0][3].animate.move_to(peg_array[0].get_center() + RIGHT * 2 + DOWN),
+      )
+    )
+    self.wait(1)
+    self.play(
+      AnimationGroup(
+        #column 3
+        [upper_unit.matrix[i][3].animate.shift(RIGHT * 10) for i in range(4)],
       )
     )
 
