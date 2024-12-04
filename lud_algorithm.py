@@ -85,10 +85,24 @@ class iterativeLUDFirst(MovingCameraScene):
     self.wait(1)
 
     self.play(AnimationGroup(
+      basic_unit.matrix[0][0].animate.change_fill(GREEN, 1),
       basic_unit.matrix[0][1].animate.change_fill(GREEN, 1),
       basic_unit.matrix[0][2].animate.change_fill(GREEN, 1),
       basic_unit.matrix[0][3].animate.change_fill(GREEN, 1),
     ))
+    self.wait(1)
+
+    row_group = VGroup(basic_unit.matrix[0][0], basic_unit.matrix[0][1], basic_unit.matrix[0][2], basic_unit.matrix[0][3]).copy()
+    row_operation = Text("keep the same value", font_size=36, color=BLACK).move_to(row_group.get_center() + (4.5, 0, 0))
+
+    all_objects = VGroup(basic_unit, row_group, row_operation)
+    self.play(
+      AnimationGroup(
+      row_group.animate.move_to(row_group.get_center() + (4.5, 1, 0)),
+      self.camera.frame.animate.set_width(all_objects.width * 1.2).move_to(all_objects.get_center() + 0.5 * UP)
+      )
+    )
+    self.play(FadeIn(row_operation))
     self.wait(1)
 
     self.play(AnimationGroup(basic_unit.matrix[0][0].animate.change_fill(PURE_RED, 1)))
@@ -109,10 +123,10 @@ class iterativeLUDFirst(MovingCameraScene):
       basic_unit.matrix[0][0].copy().animate.shift(RIGHT * 7 + DOWN * 2)
     ))
 
-    all_objects = VGroup(column_group, divisiion)
-    self.play(
-      self.camera.frame.animate.set_width(all_objects.width * 1.3).move_to(all_objects.get_center() + 0.5 * RIGHT + 0.5 * UP)
-    )
+    all_objects = VGroup(basic_unit, row_group, row_operation, column_group, divisiion)
+    # self.play(
+    #   self.camera.frame.animate.set_width(all_objects.width * 1.3).move_to(all_objects.get_center() + 0.5 * RIGHT + 0.5 * UP)
+    # )
   
     # self.play(AnimationGroup(test_unit.animate.animate_stepone()))
     # self.wait(1)
@@ -214,7 +228,7 @@ class iterativeLUDSecond(MovingCameraScene):
     )
 
     self.wait(1)
-    
+       
 class iterativeLUDThird(MovingCameraScene):
   def construct(self):
     self.camera.background_color = WHITE
@@ -295,7 +309,7 @@ class blockLUD(MovingCameraScene):
     self.wait(1)
 
     self.play(FadeIn(large_unit))
-    self.wait(0.5)
+    self.wait(1)
 
     self.play(
       AnimationGroup(
@@ -406,29 +420,96 @@ class blockLUDThird(MovingCameraScene):
   def construct(self):
     self.camera.background_color = WHITE
 
+    #initilize block unit
+    block_unit = bo.MatrixLarge(4)
+    
+    block_unit.move_to(ORIGIN)
+    # block_unit.matrix[0][0].txt = Text("C", font_size=50, color=BLACK, font="Helvetica").move_to(block_unit.matrix[0][0].get_center())
+    # block_unit.matrix[0][2].txt = Text("U", font_size=50, color=BLACK, font="Helvetica").move_to(block_unit.matrix[0][2].get_center())
+    # block_unit.matrix[2][0].txt = Text("L", font_size=50, color=BLACK, font="Helvetica").move_to(block_unit.matrix[2][0].get_center())
+    self.camera.frame.set_width(block_unit.width * 2).move_to(block_unit.get_center())
+    
+    self.play(
+      AnimationGroup(
+        FadeIn(block_unit),
+        block_unit.matrix[0][0].animate.change_fill(PURE_RED, 1),
+        block_unit.matrix[0][1].animate.change_fill(GREEN, 1),
+        block_unit.matrix[0][2].animate.change_fill(GREEN, 1),
+        block_unit.matrix[0][3].animate.change_fill(GREEN, 1),
+        block_unit.matrix[1][0].animate.change_fill(ORANGE, 1),
+        block_unit.matrix[2][0].animate.change_fill(ORANGE, 1),
+        block_unit.matrix[3][0].animate.change_fill(ORANGE, 1),
+        block_unit.matrix[1][1].animate.change_fill(BLUE, 1),
+        block_unit.matrix[1][2].animate.change_fill(BLUE, 1),
+        block_unit.matrix[1][3].animate.change_fill(BLUE, 1),
+        block_unit.matrix[2][1].animate.change_fill(BLUE, 1),
+        block_unit.matrix[2][2].animate.change_fill(BLUE, 1),
+        block_unit.matrix[2][3].animate.change_fill(BLUE, 1),
+        block_unit.matrix[3][1].animate.change_fill(BLUE, 1),
+        block_unit.matrix[3][2].animate.change_fill(BLUE, 1),
+        block_unit.matrix[3][3].animate.change_fill(BLUE, 1),
+        Transform(block_unit.matrix[0][0].txt, Text("C", font_size=100, color=BLACK, font="Helvetica").move_to(block_unit.matrix[0][0].get_center())),
+        Transform(block_unit.matrix[0][2].txt, Text("U", font_size=100, color=BLACK, font="Helvetica").move_to(block_unit.matrix[0][2].get_center())),
+        Transform(block_unit.matrix[2][0].txt, Text("L", font_size=100, color=BLACK, font="Helvetica").move_to(block_unit.matrix[2][0].get_center())),
+        Transform(block_unit.matrix[2][2].txt, Text("T", font_size=100, color=BLACK, font="Helvetica").move_to(block_unit.matrix[2][2].get_center())),
+      )
+    )
+    self.wait(1)
+    condition = lambda i, j: i == 0 and j == 0 or i == 2 and j == 0
+    animation_group = [block_unit.matrix[i][j] for i in range(4) for j in range(4) if not condition(i, j)]
+    self.play(
+      AnimationGroup(
+        FadeOut(*animation_group),
+      )
+    )
+    self.wait(2)
+
     corner_unit = bo.MatrixBasic(4)
     lower_unit = bo.MatrixBasic(4)
+    corner_unit.move_to(block_unit.matrix[0][0].get_center())
+    lower_unit.move_to(block_unit.matrix[2][0].get_center())
 
-    corner_label = Text("Corner block", font_size=50, color=PURE_RED).move_to(corner_unit.get_center() + LEFT * 5)
-    lower_label = Text("Lower perimeter \n block", font_size=50, color=ORANGE).move_to(lower_unit.get_center() + LEFT * 5 + DOWN * 5)
-
-    lower_unit.shift(DOWN * 5)
-
-    all_objects = VGroup(corner_unit, lower_unit, corner_label, lower_label)
-    self.camera.frame.set_height(all_objects.height * 1.2).move_to(all_objects.get_center())
-
-    self.add(corner_unit, lower_unit, corner_label, lower_label)
+    corner_label = Text("C", font_size=100, color=PURE_RED).move_to(corner_unit.get_center())
+    lower_label = Text("L", font_size=100, color=ORANGE).move_to(lower_unit.get_center())
 
     self.play(
-      lower_unit.matrix[2][2].animate.change_fill(DARK_BROWN, 1)
+      AnimationGroup(
+        FadeOut(block_unit.matrix[0][0]),
+        FadeOut(block_unit.matrix[2][0]),
+        FadeIn(corner_unit),
+        FadeIn(lower_unit),
+        corner_label.animate.move_to(corner_unit.get_center() + LEFT * 3),
+        lower_label.animate.move_to(lower_unit.get_center() + LEFT * 3),
+      )
+    )
+
+    self.wait(1)
+    
+    current_objects = VGroup(corner_unit, lower_unit, corner_label, lower_label)
+
+    self.play(
+      AnimationGroup(
+        self.camera.frame.animate.set_height(current_objects.height * 1.1).move_to(current_objects.get_center() + UP * 2 + RIGHT * 5),
+        lower_label.animate.shift(UP * 3),
+        lower_unit.animate.shift(UP * 3),
+      )
     )
 
     self.wait(1)
 
     self.play(
       AnimationGroup(
-        lower_unit.matrix[2][0].animate.change_fill(ORANGE, 1),
-        lower_unit.matrix[2][1].animate.change_fill(ORANGE, 1),
+        *[lower_unit.matrix[i][2].animate.change_fill(DARK_BROWN, 1) for i in range(4)],
+      ) 
+    )
+
+    self.wait(1)
+
+    self.play(
+      AnimationGroup(
+        *[lower_unit.matrix[i][j].animate.change_fill(ORANGE, 1) for i in range(4) for j in range(2)],
+        # lower_unit.matrix[2][0].animate.change_fill(ORANGE, 1),
+        # lower_unit.matrix[2][1].animate.change_fill(ORANGE, 1),
         corner_unit.matrix[0][2].animate.change_fill(GREEN, 1),
         corner_unit.matrix[1][2].animate.change_fill(GREEN, 1),
         corner_unit.matrix[2][2].animate.change_fill(PURE_RED , 1),
@@ -444,10 +525,14 @@ class blockLUDThird(MovingCameraScene):
     col_elements.append(corner_unit.matrix[0][2].copy())
     col_elements.append(corner_unit.matrix[1][2].copy())
 
-    row_vec = VGroup(row_elements[0], row_elements[1])
+    # row_vec = VGroup(row_elements[0], row_elements[1])
+    row_elements = [lower_unit.matrix[i][j].copy() for i in range(4) for j in range(2)]
+    row_vec = VGroup(*row_elements)
     col_vec = VGroup(col_elements[0], col_elements[1])
 
-    target_element = lower_unit.matrix[2][2].copy()
+    # target_element = lower_unit.matrix[2][2].copy()
+    target_elements = [lower_unit.matrix[i][2].copy() for i in range(4)]
+    target_element = VGroup(*target_elements)
 
     divide = corner_unit.matrix[2][2].copy()
 
@@ -455,9 +540,9 @@ class blockLUDThird(MovingCameraScene):
     self.add(row_vec, col_vec, target_element, divide)
     self.play(
       AnimationGroup(
-        row_vec.animate.shift(RIGHT * 10 + UP * 4),
-        col_vec.animate.shift(RIGHT * 11 + DOWN * 2.5),
-        target_element.animate.shift(RIGHT * 6 + UP * 4),
+        row_vec.animate.shift(RIGHT * 10 + UP * 4.5),
+        col_vec.animate.shift(RIGHT * 11 + DOWN * 2.5 + UP * 1),
+        target_element.animate.shift(RIGHT * 6 + UP * 4.5),
         divide.animate.shift(RIGHT * 8.5 + DOWN * 3.5)
       )
     )
@@ -471,13 +556,102 @@ class blockLUDThird(MovingCameraScene):
     results = target_element.copy().move_to(horizontal_line.get_center() + LEFT * 5)
     equal = Text("=", font_size=50, color=BLACK).move_to(results.get_center() + RIGHT)
     self.play(
-      self.camera.frame.animate.set_width(all_objects.width * 1.1).move_to(all_objects.get_center()),
+      # self.camera.frame.animate.set_width(all_objects.width * 1.1).move_to(all_objects.get_center()),
       Create(equals),
       Create(multiplication_sign),
       Create(horizontal_line),
       Create(results),
       Create(equal)
     )
+
+class systolicArrayStructure(MovingCameraScene):
+  def construct(self):
+    self.camera.background_color = WHITE
+    basic_unit = bo.MatrixBasic(4)
+
+    systolic_array = [[None for _ in range(4)] for _ in range(4)]
+
+    for i in range(4):
+      for j in range(4):
+        element = bo.RectTxt(txt="PE", h=1.5, w=1.5)
+        systolic_array[i][j] = element
+        systolic_array[i][j].move_to(ORIGIN + np.array([2 * j, -2 * i, 0]))
+        systolic_array[i][j].set_color(BLACK, 1)
+    
+    systolic_array_group = VGroup(*[systolic_array[i][j] for i in range(4) for j in range(4)])
+    self.camera.frame.set_width(systolic_array_group.width * 2).move_to(systolic_array_group.get_center())
+
+    horizontal_fifo_lines = []
+    for i in range(4):
+      for j in range(3):
+        horizontal_fifo_lines.append(
+          Line(start = systolic_array[i][j].get_right(),
+               end = systolic_array[i][j+1].get_left(),
+               color=BLACK, stroke_width=2).add_tip(tip_length=0.2, tip_width=0.1)
+        )
+    horizontal_fifo_lines_group = VGroup(*horizontal_fifo_lines)
+
+    vertical_fifo_lines = []
+    for i in range(3):
+      for j in range(4):
+        vertical_fifo_lines.append(
+          Line(start = systolic_array[i][j].get_bottom(),
+               end = systolic_array[i+1][j].get_top(),
+               color=BLACK, stroke_width=2).add_tip(tip_length=0.2, tip_width=0.1)
+        )
+    vertical_fifo_lines_group = VGroup(*vertical_fifo_lines)
+
+    self.add(systolic_array_group, horizontal_fifo_lines_group, vertical_fifo_lines_group)
+    self.wait(1)
+
+    self.play(
+      AnimationGroup(
+        *[systolic_array[i][j].animate.change_fill(BLUE, 1) for i in range(4) for j in range(4) if i != j],
+      )
+    )
+
+    self.play(
+      AnimationGroup(
+        *[systolic_array[i][j].animate.change_fill(PURE_RED, 1) for i in range(4) for j in range(4) if i == j],
+      )
+    )
+    self.wait(1)
+    
+    self.wait(1)
+    
+    selected_condition = lambda i, j: i == 1 and j == 1 or i == 0 and j == 1
+    disappearing_elements = [systolic_array[i][j] for i in range(4) for j in range(4) if not selected_condition(i, j)]
+
+    diagonal_label = Text("Diagonal \n   PE", font_size=36, color=BLACK).move_to(systolic_array[1][1].get_center() + LEFT * 3)
+    non_diagonal_label = Text("Non-diagonal \n      PE", font_size=36, color=BLACK).move_to(systolic_array[0][1].get_center() + LEFT * 3)
+
+    self.play(
+      AnimationGroup(
+        FadeOut(*disappearing_elements),
+        FadeOut(horizontal_fifo_lines_group),
+        FadeOut(vertical_fifo_lines_group),
+        FadeIn(diagonal_label),
+        FadeIn(non_diagonal_label)
+      )
+    )
+
+    diagonalImage = ImageMobject("images/DiagonalPE.png")
+    nonDiagonalImage = ImageMobject("images/NonDiagonalPE.png")
+
+    diagonalImage.move_to(systolic_array[1][1].get_center() + RIGHT * 5 + DOWN * 1)
+    nonDiagonalImage.move_to(systolic_array[0][1].get_center() + RIGHT * 5 + UP * 1)
+
+    all_objects = Group(diagonal_label, non_diagonal_label, diagonalImage, nonDiagonalImage)
+    self.play(
+      AnimationGroup(
+        self.camera.frame.animate.set_width(all_objects.width * 1.1).move_to(all_objects.get_center()),
+      )
+    )
+    self.play(FadeIn(nonDiagonalImage))
+    self.wait(2)  
+    self.play(FadeIn(diagonalImage))
+    self.wait(1)
+
 
 class systolicArray(MovingCameraScene):
   def construct(self):
@@ -922,6 +1096,12 @@ class systolicArrayLower(MovingCameraScene):
       )
     )
 
+    self.wait(1)
+    self.play(
+      self.camera.frame.animate.shift(RIGHT * 3)
+    )
+    
+
 
 class systolicArrayUpper(MovingCameraScene):
   def construct(self):
@@ -949,10 +1129,16 @@ class systolicArrayUpper(MovingCameraScene):
     systolicArray.move_to(ORIGIN + RIGHT * 7)
 
     all_objects = VGroup(basic_unit, systolicArray)
-    self.camera.frame.set_width(all_objects.width * 1.1).move_to(all_objects.get_center())
+    self.camera.frame.set_width(all_objects.width * 1.5).move_to(all_objects.get_center() + RIGHT * 2)
 
     self.add(basic_unit, systolicArray, corner_label, upper_label, lower_label, trailing_label)
 
+    self.play(
+      AnimationGroup(
+        [FadeOut(basic_unit.matrix[j][i]) for i in range(4) for j in range(1,4)],
+        FadeOut(lower_label, trailing_label),
+      )
+    )
     self.play(
       AnimationGroup(
       basic_unit.matrix[0][0].animate.move_to(systolicArray.get_center()),
@@ -960,23 +1146,49 @@ class systolicArrayUpper(MovingCameraScene):
       )
     )
 
-    self.wait(2)
-    
+    self.wait(1)
+
+    corner_copy = basic_unit.matrix[0][0].copy()
+    corner_label_copy = corner_label.copy()
     self.play(
       AnimationGroup(
-        [basic_unit.matrix[0][i].animate.shift(DOWN * 1.5) for i in range(1, 4)],
-        upper_label.animate.shift(DOWN * 1.5),
-        [FadeOut(basic_unit.matrix[1][i]) for i in range(4)],
-        [FadeOut(basic_unit.matrix[2][i]) for i in range(4)],
-        [FadeOut(basic_unit.matrix[3][i]) for i in range(4)],
-        FadeOut(lower_label, trailing_label),
+        corner_copy.animate.shift(1.5 * DOWN),
+        corner_label_copy.animate.shift(1.5 * DOWN),
+        basic_unit.matrix[0][0].animate.shift(RIGHT * 4),
+        corner_label.animate.shift(RIGHT * 4),
       )
     )
 
+    self.wait(1)
+
     self.play(
-      Create(Line(start=basic_unit.matrix[0][3].get_right() + 0.5 * RIGHT,
-                   end = systolicArray.get_left() + 0.5 * LEFT,
+      AnimationGroup(
+        Create(Line(start=basic_unit.matrix[0][3].get_right() + 0.5 * RIGHT + DOWN * 1.5,
+                    end = systolicArray.get_left() + 0.5 * LEFT,
                     color=BLACK, stroke_width=2).add_tip()
+        ),
+        [basic_unit.matrix[0][i].animate.shift(DOWN * 1.5) for i in range(1, 4)],
+        upper_label.animate.shift(DOWN * 1.5),
+        FadeOut(basic_unit.matrix[0][0]),
+        FadeOut(corner_label),
+      )
+    )
+
+    self.wait(1)
+
+    self.play(
+      AnimationGroup(
+        [basic_unit.matrix[0][i].animate.shift(RIGHT * 6.5) for i in range(1, 4)],
+        upper_label.animate.shift(RIGHT * 6.5),
+      )
+    )
+
+    self.wait(1)
+
+    self.play(
+      AnimationGroup(
+        [basic_unit.matrix[0][i].animate.shift(RIGHT * 5) for i in range(1, 4)],
+        upper_label.animate.shift(RIGHT * 5),
       )
     )
 
@@ -1006,7 +1218,7 @@ class systolicArrayTrail(MovingCameraScene):
     systolicArray.move_to(ORIGIN + RIGHT * 9)
 
     all_objects = VGroup(basic_unit, systolicArray)
-    self.camera.frame.set_width(all_objects.width * 1.2).move_to(all_objects.get_center() + UP)
+    self.camera.frame.set_width(all_objects.width * 1.3).move_to(all_objects.get_center() + UP + RIGHT * 1)
 
     self.add(basic_unit, systolicArray, corner_label, upper_label, lower_label, trailing_label)
 
@@ -1017,13 +1229,14 @@ class systolicArrayTrail(MovingCameraScene):
       )
     )
 
+    self.wait(1)
+
     self.play(
       AnimationGroup(
         basic_unit.matrix[2][0].animate.move_to(systolicArray.get_center() + LEFT * 5),
         lower_label.animate.move_to(systolicArray.get_center() + LEFT * 5),
         basic_unit.matrix[0][0].animate.move_to(systolicArray.get_center() + UP * 5),
         corner_label.animate.move_to(systolicArray.get_center() + UP * 5),
-        
       )
     )
 
@@ -1042,17 +1255,50 @@ class systolicArrayTrail(MovingCameraScene):
 
     self.wait(1)
 
-    upper_group = VGroup(basic_unit.matrix[0][1], basic_unit.matrix[0][2], basic_unit.matrix[0][3], upper_label)
     self.play(
       AnimationGroup(
         basic_unit.matrix[2][0].animate.move_to(systolicArray.get_center()),
         lower_label.animate.move_to(systolicArray.get_center()),
+      )
+    )
+
+    self.play(
+      AnimationGroup(
+        basic_unit.matrix[2][0].copy().animate.shift(DOWN * 1.5),
+        basic_unit.matrix[2][0].animate.shift(RIGHT * 4),
+        lower_label.copy().animate.shift(DOWN * 1.5),
+        lower_label.animate.shift(RIGHT * 4),
+      )
+    )
+
+    self.wait(1)
+
+    upper_group = VGroup(basic_unit.matrix[0][1], basic_unit.matrix[0][2], basic_unit.matrix[0][3], upper_label)
+    self.play(
+      AnimationGroup(
         FadeOut(basic_unit.matrix[0][0]),
         FadeOut(corner_label),
+        FadeOut(basic_unit.matrix[2][0]),
+        FadeOut(lower_label),
         # Move rest
         [basic_unit.matrix[2][i].animate.shift(UP * 0.5 + RIGHT * 2) for i in range(1, 4)],
         trailing_label.animate.shift(UP * 0.5 + RIGHT * 2),
         upper_group.animate.move_to(systolicArray.get_center() + UP * 5),
+      )
+    )
+
+    self.wait(1)
+    self.play(
+      AnimationGroup(
+        [basic_unit.matrix[2][i].animate.shift(RIGHT * 6.5) for i in range(1, 4)],
+        trailing_label.animate.shift(RIGHT * 6.5),
+      )
+    )
+
+    self.play(
+      AnimationGroup(
+        [basic_unit.matrix[2][i].animate.shift(RIGHT * 5) for i in range(1, 4)],
+        trailing_label.animate.shift(RIGHT * 5),
       )
     )
 
